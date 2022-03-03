@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package apipb;
+option go_package = "pb/api";
+
+message AuthenticationRequest {
+  string ReqID = 1;
+  string Address = 2;
+}
+
+message AuthenticationResponse {
+  string RespID = 1;
+  string AuthToken = 2;
+  bool Success = 3;
+  int32 StatusCode = 4;
+  string RedirectURL = 5;
+}
+
+service Authenticator {
+  rpc Authenticate (AuthenticationRequest) returns (AuthenticationResponse) {}
+}
