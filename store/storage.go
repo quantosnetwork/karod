@@ -33,7 +33,7 @@ func (sof StorageOption) _getLibs(so *StorageOptions, key string) map[string]int
 
 type Storage interface {
 	Initialize()
-	Open() (*interface{}, error)
+	Open() (interface{}, error)
 }
 
 func (so *StorageOptions) StorageType() interface{} {
@@ -50,14 +50,14 @@ func (so *StorageOptions) StorageLibs() map[string]interface{} {
 
 type StorageManager struct {
 	Storage
-	OpenedDB *interface{}
+	OpenedDB interface{}
 	Logger   *zap.Logger
 }
 
-func (sm StorageManager) Initialize(dbName, dbPath string) {
+func (sm StorageManager) Initialize() {
 	so := &StorageOptions{}
 	libs := so.StorageLibs()
 	sType := so.StorageType()
 	libToLoad := libs[sType.(string)].(Storage)
-	sm.OpenedDB, _ = libToLoad.Open(dbName, dbPath)
+	sm.OpenedDB, _ = libToLoad.Open()
 }
