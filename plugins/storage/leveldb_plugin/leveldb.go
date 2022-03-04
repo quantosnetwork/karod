@@ -1,8 +1,10 @@
 package plugins
 
 import (
+	"github.com/hashicorp/go-plugin"
 	"github.com/syndtr/goleveldb/leveldb"
 	"karod/store"
+	"net/rpc"
 	"strings"
 )
 
@@ -11,10 +13,22 @@ import (
 */
 
 type LevelDB struct {
+	Impl LevelDBPluginInterface
+	db   *leveldb.DB
+}
+
+type LevelDBPluginInterface interface {
 	store.Storage
 	store.Query
 	store.Iterator
-	db *leveldb.DB
+}
+
+func (ldb *LevelDB) Server(broker *plugin.MuxBroker) (interface{}, error) {
+	return &RPCServer{Impl: ldb.Impl}, nil
+}
+
+func (ldb *LevelDB) Client(broker *plugin.MuxBroker, client *rpc.Client) (interface{}, error) {
+	return &RPCClient{client: client}, nil
 }
 
 func (ldb *LevelDB) Initialize() {

@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package pluginspb;
+option go_package = "pb/plugins";
+
+message PutRequest {
+  bytes key = 1;
+  bytes value = 2;
+}
+
+message GetRequest {
+  bytes key = 1;
+}
+
+message PutResponse {
+  bytes entry = 1;
+  bool success = 2;
+  string error = 3;
+  int64 timestamp = 4;
+}
+
+message GetResponse {
+  Entry entry = 1;
+  bool success = 2;
+  string error = 3;
+}
+
+message Entry {
+  string id = 1;
+  string prefix = 2;
+  string key = 3;
+  string value = 4;
+  bool is_encrypted = 5;
+  int64 created_at = 6;
+  int64 updated_at = 7;
+}
+
+message Empty {}
+
+service LevelDBGrpc {
+  rpc Put(PutRequest) returns (PutResponse);
+  rpc Get(GetRequest) returns (GetResponse);
+}

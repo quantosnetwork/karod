@@ -1,47 +1,29 @@
 package plugins
 
 import (
-	"context"
-	"github.com/libp2p/go-libp2p-core/transport"
-	"karod/plugins/storage"
+	"github.com/hashicorp/go-plugin"
 )
 
 type PluginManager interface {
-	ListAll() map[PluginType]string
-	LoadStoragePlugin(storage.StoragePlugin) error
-	LoadTransportPlugin(transport transport.Transport)
-	GetStoragePluginInterface() *storage.StorePlugin
+	ServePlugins()
 }
 
 type Plugin interface {
-	New() interface{}
-	Load() Loader
-	Name() string
-	Type() PluginType
-	SortOrder() int
-	Initializer()
-	LoadBefore(pluginName string) func()
-	LoadAfter(pluginName string)
-	Wrap(ctx context.Context, wrapped interface{}) WrapperFunction
-	Verify() error
-	Signature() []byte
-	Config() []map[string]string
+	plugin.Plugin
 }
 
-type WrapperFunction func(ctx context.Context, wrapped interface{}) error
-
-type PluginType uint32
-
-func (pt PluginType) String() string {
-	return ""
+type PluginsManager struct {
+	PluginManager
 }
 
-const (
-	PluginStorage PluginType = iota
-	PluginTransport
-	PluginBlockChain
-	PluginConsensus
-	PluginSecurity
-)
+func (pm *PluginsManager) ServePlugins() {
+	plugin.Serve(&plugin.ServeConfig{
+		HandshakeConfig: Handshake,
+		Plugins:         PluginMap,
+		GRPCServer:      plugin.DefaultGRPCServer,
+	})
+}
 
-type Loader func(pluginType, pluginName string, pluginInterface interface{}) error
+func NewPluginManager() PluginManager {
+	return &PluginsManager{}
+}
