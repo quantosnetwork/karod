@@ -33,7 +33,7 @@ func (ldb *LevelDB) Open() (interface{}, error) {
 	return ldb, err
 }
 
-func NewLevelDB() Storage {
+func NewLevelDB() store.Storage {
 	ldb := &LevelDB{}
 	return ldb
 }
@@ -54,12 +54,12 @@ func (ldb *LevelDB) Put(key string, value string) error {
 	return nil
 }
 
-func (ldb *LevelDB) Get(key string) (value *Entry) {
+func (ldb *LevelDB) Get(key string) (value *store.Entry) {
 	entry, err := DB.db.Get([]byte(key), nil)
 	if err != nil {
-		return &Entry{}
+		return &store.Entry{}
 	}
-	return &Entry{
+	return &store.Entry{
 		Key:   []byte(key),
 		Value: entry,
 	}
@@ -73,7 +73,7 @@ func (ldb *LevelDB) PutWithPrefix(prefix, key string, value string) error {
 	return ldb.Put(kk, value)
 }
 
-func (ldb *LevelDB) GetWithPrefix(prefix, key string) (value *Entry) {
+func (ldb *LevelDB) GetWithPrefix(prefix, key string) (value *store.Entry) {
 	var k []string
 	k[0] = prefix
 	k[1] = key
