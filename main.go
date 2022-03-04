@@ -21,6 +21,7 @@ THE SOFTWARE.
 */
 package main
 
+import _ "karod/services"
 import "karod/cmd"
 
 func main() {
