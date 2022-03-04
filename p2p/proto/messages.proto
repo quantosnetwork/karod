@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package p2ppb;
+option go_package = "pb/p2p";
+
+message ApiRequest {
+  string authToken = 1;
+  string ReqID = 2;
+  string ApiPath = 3;
+  bytes ReqData = 4;
+}
+
+message ApiResponse {
+  string ReqID = 1;
+  string ResID = 2;
+  bytes ResData = 3;
+  DataType ResDataType = 4;
+  int32 StatusCode = 5;
+}
+
+enum DataType {
+  UNKNOWN = 0;
+  AUTH = 1;
+  BLOCKCHAIN_MISC_ASSET = 2;
+  TRANSACTION = 3;
+  WALLET = 4;
+  BLOCK = 5;
+  CONTRACT = 6;
+  DNS = 7;
+  ERROR = 8;
+  INFO = 9;
+  META = 10;
+  NFT = 11;
+  CONTENT = 12;
+  STATE = 13;
+  INDEX = 14;
+  RECEIPT = 15;
+  HEADER = 16;
+  REDIRECT = 17;
+  PLUGIN = 18;
+  ADDRESS = 19;
+  KEY = 20;
+  ROUTER = 21;
+  PROXY = 22;
+  QUANTIX = 23;
+  VERSION = 24;
+  FILE = 25;
+  ORACLE = 26;
+  GENESIS = 27;
+  INTERNAL = 999;
+}
+
+message Error {
+  string ReqID = 1;
+  int32 Code = 2;
+  string Message = 3;
+}
