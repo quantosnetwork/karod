@@ -47,7 +47,11 @@ enum DataType {
   FILE = 25;
   ORACLE = 26;
   GENESIS = 27;
+  BRIDGE = 28;
+  CHILD_CHAIN_LAYERX = 29;
+  COMMAND = 998;
   INTERNAL = 999;
+  EGG = 99887;
 }
 
 message Error {
