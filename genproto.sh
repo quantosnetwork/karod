@@ -11,25 +11,34 @@ function install_tools() {
 function generate_proto_and_grpc() {
 	find * -name "*.proto" | grep -v "vendor" | grep -v "google" | xargs -n1 \
 		protoc -I/usr/local/include -I. -Ivendor \
-		-Iapi/proto \
-		--go_out=. --go_opt=paths=source_relative \
-		--go-grpc_out=. --go-grpc_opt=require_unimplemented_servers=false,paths=source_relative
+		-Ithird_party/google/api \
+		-Ithird_party/google/protobuf \
+		-Ithird_party/protoc-gen-swagger/options \
+		 --proto_path=third_party \
+		--go_out=pkg/api/v1 --go_opt=paths=source_relative \
+		--go-grpc_out=pkg/api/v1 --go-grpc_opt=require_unimplemented_servers=false,paths=source_relative
 }
 
 function generate_grpc_gateway() {
 	protoc -I/usr/local/include -I. -Ivendor \
-		-Iapi/proto \
-		--grpc-gateway_out=logtostderr=true,paths=source_relative:. api/proto/apirpc.proto
+			-Ithird_party/google/api \
+    		-Ithird_party/google/protobuf \
+    		-Ithird_party/protoc-gen-swagger/options \
+    		 --proto_path=third_party \
+		--grpc-gateway_out=logtostderr=true,paths=source_relative:. api/proto/v1/apirpc.proto
 }
 
 function generate_openapi() {
 	protoc -I/usr/local/include -I. -Ivendor \
-		-Iapi/proto \
+			-Ithird_party/google/api \
+    		-Ithird_party/google/protobuf \
+    		-Ithird_party/protoc-gen-swagger/options \
+    	 --proto_path=third_party \
 		--openapiv2_out=logtostderr=true:. \
-		api/proto/apirpc.proto
+		api/proto/v1/apirpc.proto
 }
 
-install_tools
+#install_tools
 generate_proto_and_grpc
 generate_grpc_gateway
 generate_openapi

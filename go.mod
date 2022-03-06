@@ -3,7 +3,9 @@ module github.com/quantosnetwork/karod
 go 1.17
 
 require (
+	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.3.0
+	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.8.0
 	github.com/hashicorp/go-plugin v1.4.3
 	github.com/ipfs/go-cid v0.1.0
@@ -29,7 +31,6 @@ require (
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f
 	google.golang.org/genproto v0.0.0-20220304144024-325a89244dc8
 	google.golang.org/grpc v1.44.0
-	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0
 	google.golang.org/protobuf v1.27.1
 )
 
@@ -45,8 +46,6 @@ require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang/glog v1.0.0 // indirect
-	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/gopacket v1.1.19 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
@@ -158,5 +157,4 @@ require (
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	lukechampine.com/blake3 v1.1.6 // indirect
-	sigs.k8s.io/yaml v1.3.0 // indirect
 )
