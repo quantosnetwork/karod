@@ -43,21 +43,19 @@ func (c *authenticatorClient) Authenticate(ctx context.Context, in *Authenticati
 }
 
 // AuthenticatorServer is the server API for Authenticator service.
-// All implementations must embed UnimplementedAuthenticatorServer
+// All implementations should embed UnimplementedAuthenticatorServer
 // for forward compatibility
 type AuthenticatorServer interface {
 	Authenticate(context.Context, *AuthenticationRequest) (*AuthenticationResponse, error)
-	mustEmbedUnimplementedAuthenticatorServer()
 }
 
-// UnimplementedAuthenticatorServer must be embedded to have forward compatible implementations.
+// UnimplementedAuthenticatorServer should be embedded to have forward compatible implementations.
 type UnimplementedAuthenticatorServer struct {
 }
 
 func (UnimplementedAuthenticatorServer) Authenticate(context.Context, *AuthenticationRequest) (*AuthenticationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Authenticate not implemented")
 }
-func (UnimplementedAuthenticatorServer) mustEmbedUnimplementedAuthenticatorServer() {}
 
 // UnsafeAuthenticatorServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to AuthenticatorServer will

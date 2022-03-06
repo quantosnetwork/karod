@@ -21,8 +21,8 @@ THE SOFTWARE.
 */
 package main
 
-import _ "karod/services"
 import "karod/cmd"
+import _ "karod/p2p"
 
 func main() {
 	cmd.Execute()

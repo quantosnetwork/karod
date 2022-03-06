@@ -43,21 +43,19 @@ func (c *authorizationServerClient) Authorize(ctx context.Context, in *Authoriza
 }
 
 // AuthorizationServerServer is the server API for AuthorizationServer service.
-// All implementations must embed UnimplementedAuthorizationServerServer
+// All implementations should embed UnimplementedAuthorizationServerServer
 // for forward compatibility
 type AuthorizationServerServer interface {
 	Authorize(context.Context, *AuthorizationRequest) (*AuthorizationResponse, error)
-	mustEmbedUnimplementedAuthorizationServerServer()
 }
 
-// UnimplementedAuthorizationServerServer must be embedded to have forward compatible implementations.
+// UnimplementedAuthorizationServerServer should be embedded to have forward compatible implementations.
 type UnimplementedAuthorizationServerServer struct {
 }
 
 func (UnimplementedAuthorizationServerServer) Authorize(context.Context, *AuthorizationRequest) (*AuthorizationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Authorize not implemented")
 }
-func (UnimplementedAuthorizationServerServer) mustEmbedUnimplementedAuthorizationServerServer() {}
 
 // UnsafeAuthorizationServerServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to AuthorizationServerServer will

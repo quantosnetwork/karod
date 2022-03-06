@@ -23,13 +23,13 @@ func (prpc *P2PRpc) New(h host.Host) {
 
 func (prpc *P2PRpc) RegisterServices(repo *services.ServiceRepository) (err error) {
 	for _, elem := range repo.Services {
-		for k, svc := range elem {
-			// We register all services in the ServiceRepository by Name
-			err = prpc.host.RegisterName(k, svc)
-			if err != nil {
-				return err
-			}
+
+		// We register all services in the ServiceRepository by Name
+		err = prpc.host.RegisterName(elem.Name(), elem)
+		if err != nil {
+			return err
 		}
+
 	}
 	return nil
 }

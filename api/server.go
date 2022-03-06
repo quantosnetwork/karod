@@ -2,11 +2,8 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"google.golang.org/grpc"
-	apipb "karod/pb/api"
 	"net"
-	"os"
 )
 
 type GrpcApiServer struct {
@@ -31,6 +28,7 @@ type ApiManager struct {
 	apiServer
 }
 
+/*
 func (a *ApiManager) NewServer() *GrpcApiServer {
 	server := &GrpcApiServer{}
 	server.server = grpc.NewServer()
@@ -39,13 +37,6 @@ func (a *ApiManager) NewServer() *GrpcApiServer {
 	return server
 }
 
-func (a *ApiManager) NewAuthorizationServer() apipb.AuthorizationServerServer {
-	return AuthorizationServer{}
-}
-
-func (a *ApiManager) NewAuthenticationServer() apipb.AuthenticatorServer {
-	return AuthenticationServer{}
-}
 
 func (a *ApiManager) StartApiServer(host string, port int) {
 
@@ -69,3 +60,4 @@ func (a *ApiManager) StartApiServer(host string, port int) {
 	}
 
 }
+*/

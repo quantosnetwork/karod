@@ -1,16 +1,10 @@
 package services
 
 import (
-	"./svcs"
 	"context"
-	"errors"
-	"github.com/davecgh/go-spew/spew"
 	gorpc "github.com/libp2p/go-libp2p-gorpc"
 	"go.uber.org/atomic"
-	"io/ioutil"
 	"karod/services/svcs"
-	"reflect"
-	"strings"
 	"time"
 )
 
@@ -123,45 +117,8 @@ func CreateNewService(name, path string, f interface{}) error {
 	return nil
 }
 
-func (s ServiceRepository) LoadNewServices() {
-	dirfiles, _ := ioutil.ReadDir("services/svcs")
-
-	for _, files := range dirfiles {
-		filesplit := strings.Split(files.Name(), ".")
-		if filesplit[1] == "service" {
-			svcname := filesplit[0]
-			funcName := "svcs.New" + strings.Title(svcname) + "Service"
-
-			_ = CreateNewService(svcname, "/svc/"+svcname, funcName)
-			_, err := CallServiceFunc(s.Services, funcName)
-			if err != nil {
-				return
-			}
-		}
-	}
-}
-
-func CallServiceFunc(stub map[string]Service, funcName string, params ...interface{}) (result interface{}, err error) {
-	StubStorage := stub
-
-	f := reflect.Value.MethodByName(StubStorage[funcName])
-	spew.Dump(stub)
-	if len(params) != f.Type().NumIn() {
-		err = errors.New("The number of params is out of index.")
-		return
-	}
-	in := make([]reflect.Value, len(params))
-	for k, param := range params {
-		in[k] = reflect.ValueOf(param)
-	}
-
-	res := f.Call(in)
-	result = res[0].Interface()
-	return
-}
-
 func init() {
 	Repo.Services = map[string]Service{}
 	Repo.Services["ping"] = svcs.NewPingService()
-	Repo.LoadNewServices()
+
 }
