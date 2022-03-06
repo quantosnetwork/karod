@@ -21,8 +21,9 @@ THE SOFTWARE.
 */
 package main
 
-import "karod/cmd"
-import _ "karod/p2p"
+import "github.com/quantosnetwork/karod/cmd"
+import _ "github.com/quantosnetwork/karod/p2p"
+import _ "github.com/quantosnetwork/karod/tools"
 
 func main() {
 	cmd.Execute()
