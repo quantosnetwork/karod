@@ -71,6 +71,10 @@ type Server struct {
 	cancel           context.CancelFunc
 }
 
+func (s *Server) Disconnect(id peer.ID, s2 string) {
+
+}
+
 type Peer struct {
 	srv *Server
 

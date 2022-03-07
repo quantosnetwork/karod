@@ -1,142 +1,81 @@
 package p2p
 
 import (
-	"fmt"
+	"context"
+	"github.com/google/uuid"
 	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/quantosnetwork/karod/workers"
+	"log"
 	"runtime"
-	"sync"
+	"strconv"
+	"time"
 )
 
-type dialQueue struct {
-	heap     dialQueueImpl
-	lock     sync.Mutex
-	items    map[peer.ID]*dialJob
-	updateCh chan struct{}
-	closeCh  chan struct{}
-}
+var MaxWorkers = runtime.NumCPU() - 1
 
-type dialWorker struct {
-	id      int
-	jobs    chan *dialJob
-	results chan string
-}
+func (s *Server) RunDialerWorkPool() {
+	wp := workers.New(MaxWorkers)
+	ctx, cancel := context.WithCancel(context.TODO())
+	defer cancel()
 
-type dialJob struct {
-	index    int
-	addr     peer.AddrInfo
-	priority uint64
-}
+	go wp.GenerateFrom(s.getDialJobs())
+	go wp.Run(ctx)
 
-type dialWorkerPool struct {
-	maxDialers   int
-	minDialers   int
-	workers      []*dialWorker
-	workersState map[*dialWorker]int
-	jobsQueue    *dialQueue
-}
-
-func NewWorkerPool() *dialWorkerPool {
-
-	maxWorkers := runtime.NumCPU() - 1
-
-	dw := &dialWorkerPool{
-		maxDialers:   maxWorkers,
-		minDialers:   2,
-		workers:      make([]*dialWorker, maxWorkers),
-		workersState: make(map[*dialWorker]int),
-		jobsQueue:    new(dialQueue),
-	}
-
-	for i := 0; i < maxWorkers; i++ {
-		dw.NewWorker(i + 1)
-	}
-	fmt.Printf("added %x workers \n", len(dw.workers))
-	return dw
-}
-
-func (dw *dialWorkerPool) NewWorker(i int) {
-	worker := &dialWorker{
-		id:      i,
-		jobs:    make(chan *dialJob),
-		results: make(chan string),
-	}
-	dw.workers[worker.id-1] = worker
-	dw.workersState[worker] = 0 // 0 = idle initial state
-
-}
-
-func (dw *dialWorkerPool) dispatchJob(jobs chan *dialJob, results chan string) {
-	maxJobs := len(jobs) / len(dw.workers)
-	var wg sync.WaitGroup
-	defer wg.Done()
-	for w := 1; w <= len(dw.workers); w++ {
-		wg.Add(1)
-
-		for i := 1; i <= maxJobs; i++ {
-			for j := range jobs {
-				dw.workers[w].jobs <- j
-				dw.workers[w].work(jobs, results)
-				<-results
+	for {
+		select {
+		case r, ok := <-wp.Results():
+			if !ok {
+				continue
 			}
+			_, err := strconv.ParseInt(string(r.Descriptor.ID), 10, 64)
+			if err != nil {
+				log.Fatalf("unexpected error: %v", err)
+			}
+		case <-wp.Done:
+			return
+		default:
 		}
 	}
-	close(jobs)
 
 }
 
-func (w *dialWorker) work(jobs chan *dialJob, results chan string) {
+func getMaxJobsPerWorker(jobCnt int) int {
+	return jobCnt / MaxWorkers
+}
 
-	for j := range jobs {
-		results <- "done" + j.addr.String()
+func (s *Server) getDialJobs() []workers.Job {
+	queue := s.dialQueue
+	jobs := make([]workers.Job, len(queue.items))
+	for i, _ := range jobs {
+		id, _ := uuid.NewUUID()
+		jobs[i] = workers.Job{
+			Descriptor: setJobDescriptor(id.String()),
+			ExecFn:     execFn,
+			Args:       queue.items[i],
+		}
 	}
-
+	return jobs
 }
 
-func (s *Server) DialFunc(addr []peer.AddrInfo) {
-	var wg sync.WaitGroup
-	wp := NewWorkerPool()
-	jobs := wp.jobsQueue
-	jobs.items = make(map[peer.ID]*dialJob)
+var execFn = func(ctx context.Context, args interface{}) (interface{}, error) {
+	return nil, nil
+}
 
-	for i, p := range addr {
-		jobs.items[p.ID] = &dialJob{index: i, addr: addr[i], priority: uint64(i)}
-		wp.jobsQueue.heap.Push(jobs.items[p.ID])
+func setJobDescriptor(jobID string) workers.JobDescriptor {
+	return workers.JobDescriptor{
+		ID:    workers.JobID(jobID),
+		JType: workers.JobType("p2pDialer"),
+		Metadata: workers.JobMetadata{
+			"dialer":      "ok",
+			"timeCreated": time.Now().UnixNano(),
+		},
 	}
-	defer wg.Done()
-	wg.Add(len(wp.workers))
-
 }
 
-type dialQueueImpl []*dialJob
-
-func (d dialQueueImpl) Len() int {
-	return len(d)
+type dialQueue struct {
+	items []peer.AddrInfo
 }
 
-func (d dialQueueImpl) Less(i, j int) bool {
-	return d[i].priority < d[j].priority
-}
-
-func (d dialQueueImpl) Swap(i, j int) {
-	d[i], d[j] = d[j], d[i]
-	d[i].index = i
-	d[j].index = j
-}
-
-func (d *dialQueueImpl) Push(x interface{}) {
-	n := len(*d)
-	item := x.(*dialJob) //nolint:forcetypeassert
-	item.index = n
-	*d = append(*d, item)
-}
-
-func (d *dialQueueImpl) Pop() interface{} {
-	old := *d
-	n := len(old)
-	item := old[n-1]
-	old[n-1] = nil
-	item.index = -1
-	*d = old[0 : n-1]
-
-	return item
+type dialJobArgs struct {
+	toDial peer.AddrInfo
 }

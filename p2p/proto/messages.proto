@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-package p2ppb;
-option go_package = "pb/p2p";
+package v1;
+option go_package = "p2p/proto";
 
 message ApiRequest {
   string authToken = 1;

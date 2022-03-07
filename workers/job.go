@@ -1,0 +1,45 @@
+package workers
+
+import (
+	"context"
+)
+
+type JobID string
+type JobType string
+
+type JobMetadata map[string]interface{}
+
+type ExecutionFn func(ctx context.Context, args interface{}) (interface{}, error)
+
+type Job struct {
+	Descriptor JobDescriptor
+	ExecFn     ExecutionFn
+	Args       interface{}
+}
+
+type JobDescriptor struct {
+	ID       JobID
+	JType    JobType
+	Metadata map[string]interface{}
+}
+
+type Result struct {
+	Value      interface{}
+	Err        error
+	Descriptor JobDescriptor
+}
+
+func (j Job) execute(ctx context.Context) Result {
+	value, err := j.ExecFn(ctx, j.Args)
+	if err != nil {
+		return Result{
+			Err:        err,
+			Descriptor: j.Descriptor,
+		}
+	}
+
+	return Result{
+		Value:      value,
+		Descriptor: j.Descriptor,
+	}
+}
