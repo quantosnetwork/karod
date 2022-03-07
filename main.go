@@ -23,7 +23,6 @@ package main
 
 import "github.com/quantosnetwork/karod/cmd"
 import _ "github.com/quantosnetwork/karod/p2p"
-import _ "github.com/quantosnetwork/karod/tools"
 
 func main() {
 	cmd.Execute()

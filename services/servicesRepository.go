@@ -3,8 +3,8 @@ package services
 import (
 	"context"
 	gorpc "github.com/libp2p/go-libp2p-gorpc"
+	"github.com/quantosnetwork/karod/services/svcs"
 	"go.uber.org/atomic"
-	"karod/services/svcs"
 	"time"
 )
 

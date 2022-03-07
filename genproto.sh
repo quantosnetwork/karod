@@ -5,7 +5,13 @@ function install_tools() {
 		github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
 		github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 \
 		google.golang.org/protobuf/cmd/protoc-gen-go \
-		google.golang.org/grpc/cmd/protoc-gen-go-grpc
+		google.golang.org/grpc/cmd/protoc-gen-go-grpc \
+
+	go install \
+	github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest \
+  		github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest \
+  		google.golang.org/protobuf/cmd/protoc-gen-go@latest \
+  		google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 }
 
 function generate_proto_and_grpc() {
@@ -15,8 +21,8 @@ function generate_proto_and_grpc() {
 		-Ithird_party/google/protobuf \
 		-Ithird_party/protoc-gen-swagger/options \
 		 --proto_path=third_party \
-		--go_out=pkg/api/v1 --go_opt=paths=source_relative \
-		--go-grpc_out=pkg/api/v1 --go-grpc_opt=require_unimplemented_servers=false,paths=source_relative
+		--go_out=pkg --go_opt=paths=source_relative \
+		--go-grpc_out=pkg --go-grpc_opt=require_unimplemented_servers=false,paths=source_relative
 }
 
 function generate_grpc_gateway() {
@@ -34,7 +40,7 @@ function generate_openapi() {
     		-Ithird_party/google/protobuf \
     		-Ithird_party/protoc-gen-swagger/options \
     	 --proto_path=third_party \
-		--openapiv2_out=logtostderr=true:. \
+		--openapiv2_out=pkg \
 		api/proto/v1/apirpc.proto
 }
 
