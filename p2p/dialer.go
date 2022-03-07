@@ -3,12 +3,9 @@ package p2p
 import (
 	"fmt"
 	"github.com/libp2p/go-libp2p-core/peer"
+	"runtime"
 	"sync"
 )
-
-const MaxDialers = 4
-
-const MinDialers = 2
 
 type dialQueue struct {
 	heap     dialQueueImpl
@@ -20,7 +17,7 @@ type dialQueue struct {
 
 type dialWorker struct {
 	id      int
-	jobs    chan dialJob
+	jobs    chan *dialJob
 	results chan string
 }
 
@@ -40,25 +37,27 @@ type dialWorkerPool struct {
 
 func NewWorkerPool() *dialWorkerPool {
 
+	maxWorkers := runtime.NumCPU() - 1
+
 	dw := &dialWorkerPool{
-		maxDialers:   MaxDialers,
-		minDialers:   MinDialers,
-		workers:      make([]*dialWorker, MaxDialers),
+		maxDialers:   maxWorkers,
+		minDialers:   2,
+		workers:      make([]*dialWorker, maxWorkers),
 		workersState: make(map[*dialWorker]int),
 		jobsQueue:    new(dialQueue),
 	}
 
-	for i := 0; i < MaxDialers; i++ {
-		dw.NewWorker()
+	for i := 0; i < maxWorkers; i++ {
+		dw.NewWorker(i + 1)
 	}
 	fmt.Printf("added %x workers \n", len(dw.workers))
 	return dw
 }
 
-func (dw *dialWorkerPool) NewWorker() {
+func (dw *dialWorkerPool) NewWorker(i int) {
 	worker := &dialWorker{
-		id:      len(dw.workers),
-		jobs:    make(chan dialJob),
+		id:      i,
+		jobs:    make(chan *dialJob),
 		results: make(chan string),
 	}
 	dw.workers[worker.id-1] = worker
@@ -66,8 +65,46 @@ func (dw *dialWorkerPool) NewWorker() {
 
 }
 
-func (dw *dialWorkerPool) dispatchJob(jobs <-chan dialJob, results chan<- string) {
-	
+func (dw *dialWorkerPool) dispatchJob(jobs chan *dialJob, results chan string) {
+	maxJobs := len(jobs) / len(dw.workers)
+	var wg sync.WaitGroup
+	defer wg.Done()
+	for w := 1; w <= len(dw.workers); w++ {
+		wg.Add(1)
+
+		for i := 1; i <= maxJobs; i++ {
+			for j := range jobs {
+				dw.workers[w].jobs <- j
+				dw.workers[w].work(jobs, results)
+				<-results
+			}
+		}
+	}
+	close(jobs)
+
+}
+
+func (w *dialWorker) work(jobs chan *dialJob, results chan string) {
+
+	for j := range jobs {
+		results <- "done" + j.addr.String()
+	}
+
+}
+
+func (s *Server) DialFunc(addr []peer.AddrInfo) {
+	var wg sync.WaitGroup
+	wp := NewWorkerPool()
+	jobs := wp.jobsQueue
+	jobs.items = make(map[peer.ID]*dialJob)
+
+	for i, p := range addr {
+		jobs.items[p.ID] = &dialJob{index: i, addr: addr[i], priority: uint64(i)}
+		wp.jobsQueue.heap.Push(jobs.items[p.ID])
+	}
+	defer wg.Done()
+	wg.Add(len(wp.workers))
+
 }
 
 type dialQueueImpl []*dialJob
