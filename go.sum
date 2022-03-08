@@ -1106,6 +1106,8 @@ github.com/prometheus/procfs v0.7.3 h1:4jVXhlkAyzOScmCkXBTOLRLTz8EeU+eyjrwB/EPq0
 github.com/prometheus/procfs v0.7.3/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1xBZuNvfVA=
 github.com/quantosnetwork/Quantos v0.0.0-20220306172517-e20b28c5a29a h1:Yh/ugCemkROnbDXodhnqIVBp3cMluJJAccxZxY9fGG0=
 github.com/quantosnetwork/Quantos v0.0.0-20220306172517-e20b28c5a29a/go.mod h1:AK23eDYLFh29Ft4nmxcHKXnvdSXcwwyXhqhz154AxjU=
+github.com/quantosnetwork/quantos-kyber-schnorr-go-libp2p-core v0.14.1-0.20220308172106-5eccbfe9e5ae h1:RSsvfiaDKWdQkmt3PdpJDZMRURlXeTPTypsdVoW2W9Q=
+github.com/quantosnetwork/quantos-kyber-schnorr-go-libp2p-core v0.14.1-0.20220308172106-5eccbfe9e5ae/go.mod h1:ngyd5rgDtGSAV5gLcR/43ZEZ3vs4D1qSiQh1LZrU8j4=
 github.com/raulk/clock v1.1.0 h1:dpb29+UKMbLqiU/jqIJptgLR1nn23HLgMY0sTCDza5Y=
 github.com/raulk/clock v1.1.0/go.mod h1:3MpVxdZ/ODBQDxbN+kzshf5OSZwPjtMDx6BBXBmOeY0=
 github.com/raulk/go-watchdog v1.2.0 h1:konN75pw2BMmZ+AfuAm5rtFsWcJpKF3m02rKituuXNo=
@@ -1192,6 +1194,7 @@ github.com/streadway/amqp v0.0.0-20190404075320-75d898a42a94/go.mod h1:AZpEONHx3
 github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271/go.mod h1:AZpEONHx3DKn8O/DFsRAY58/XVQiIPMTMB1SddzLXVw=
 github.com/streadway/handy v0.0.0-20190108123426-d5acb3125c2a/go.mod h1:qNTQ5P5JnDBl6z3cMAg/SywNDC5ABu5ApDIw6lUbRmI=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+github.com/stretchr/objx v0.1.1 h1:2vfRuCMp5sSVIDSqO8oNnWJq7mPa6KVP3iPIwFBuy8A=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=

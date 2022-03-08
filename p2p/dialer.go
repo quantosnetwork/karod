@@ -73,9 +73,9 @@ func setJobDescriptor(jobID string) workers.JobDescriptor {
 }
 
 type dialQueue struct {
-	items []peer.AddrInfo
+	items []*peer.AddrInfo
 }
 
 type dialJobArgs struct {
-	toDial peer.AddrInfo
+	toDial *peer.AddrInfo
 }
